@@ -1,0 +1,21 @@
+{
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "nodeVersion": "20.x",
+  "env": [
+    {
+      "key": "NEXT_PUBLIC_GROQ_API_KEY",
+      "description": "GROQ API Key for AI model access",
+      "default": "",
+      "required": true
+    }
+  ],
+  "functions": {
+    "app/**": {
+      "memory": 3008,
+      "maxDuration": 60
+    }
+  }
+}
