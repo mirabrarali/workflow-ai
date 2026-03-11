@@ -31,6 +31,7 @@ export function Dashboard({ showChat = true }: DashboardProps) {
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   useEffect(() => {
     // Load workflows from localStorage
@@ -115,208 +116,226 @@ export function Dashboard({ showChat = true }: DashboardProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                🤖 WorkflowAI
-              </h1>
-              <p className="text-gray-600 mt-1">
-                AI-Powered Workflow Automation Platform
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="text-sm text-gray-600">
-                {workflows.length} workflow{workflows.length !== 1 ? 's' : ''}
-              </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      {/* Animated Background Elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
+        <div className="absolute -bottom-8 left-20 w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-pink-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-4000"></div>
+      </div>
+
+      <div className="relative z-10">
+        {/* Header */}
+        <div className="backdrop-blur-md bg-white/5 border-b border-white/10 sticky top-0 shadow-xl">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-4">
+                <div className="text-5xl">🤖</div>
+                <div>
+                  <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 text-transparent bg-clip-text">
+                    WorkflowAI
+                  </h1>
+                  <p className="text-gray-300 mt-1 text-sm">
+                    AI-Powered Workflow Automation Platform
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-3xl font-bold text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text">
+                  {workflows.length}
+                </div>
+                <p className="text-gray-400 text-sm">
+                  Workflow{workflows.length !== 1 ? 's' : ''} Created
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Navigation */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-8">
+        {/* Navigation Tabs */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex space-x-4 mb-8">
             <button
               onClick={() => setView('templates')}
-              className={`px-1 py-4 border-b-2 font-medium text-sm transition-colors ${
+              className={`px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 backdrop-blur-md border ${
                 view === 'templates'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-blue-400/30 shadow-lg shadow-blue-500/20'
+                  : 'bg-white/5 text-gray-300 border-white/10 hover:bg-white/10 hover:border-white/20'
               }`}
             >
               📋 Templates
             </button>
             <button
               onClick={() => setView('workflows')}
-              className={`px-1 py-4 border-b-2 font-medium text-sm transition-colors ${
+              className={`px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 backdrop-blur-md border ${
                 view === 'workflows'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-blue-400/30 shadow-lg shadow-blue-500/20'
+                  : 'bg-white/5 text-gray-300 border-white/10 hover:bg-white/10 hover:border-white/20'
               }`}
             >
               ⚙️ My Workflows
             </button>
           </div>
-        </div>
-      </div>
 
-      {/* Search Bar */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <input
-            type="text"
-            placeholder="Search workflows..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {view === 'templates' && (
-          <div>
-            {/* Category Filter */}
-            <div className="mb-6 flex flex-wrap gap-2">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                    selectedCategory === category
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
+          {/* Search Bar */}
+          <div className="mb-8">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search workflows..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-6 py-4 rounded-xl backdrop-blur-md bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+              />
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
             </div>
+          </div>
 
-            {/* Templates Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {getDisplayTemplates().map((template) => (
-                <div
-                  key={template.id}
-                  className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden"
-                >
-                  <div className="p-6">
-                    <div className="text-4xl mb-3">{template.icon}</div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                      {template.name}
-                    </h3>
-                    <p className="text-gray-600 text-sm mb-4">
-                      {template.description}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {template.tags?.map((tag) => (
-                        <span
-                          key={tag}
-                          className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded"
-                        >
-                          {tag}
+          {/* Content */}
+          {view === 'templates' && (
+            <div>
+              {/* Category Filter */}
+              <div className="mb-8 flex flex-wrap gap-3">
+                {categories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    className={`px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 backdrop-blur-md border ${
+                      selectedCategory === category
+                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-blue-400/30 shadow-lg shadow-blue-500/20 scale-105'
+                        : 'bg-white/5 text-gray-300 border-white/10 hover:bg-white/10 hover:border-white/20 hover:scale-105'
+                    }`}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+
+              {/* Templates Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {getDisplayTemplates().map((template) => (
+                  <div
+                    key={template.id}
+                    onMouseEnter={() => setHoveredCard(template.id)}
+                    onMouseLeave={() => setHoveredCard(null)}
+                    className="group cursor-pointer backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-purple-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/10 hover:scale-105 transform"
+                  >
+                    <div className="p-8 h-full flex flex-col">
+                      <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                        {template.icon}
+                      </div>
+                      <h3 className="text-2xl font-bold text-white mb-3 group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 group-hover:text-transparent group-hover:bg-clip-text transition-all">
+                        {template.name}
+                      </h3>
+                      <p className="text-gray-400 text-sm mb-6 flex-grow leading-relaxed">
+                        {template.description}
+                      </p>
+                      <div className="flex flex-wrap gap-2 mb-6">
+                        {template.tags?.map((tag) => (
+                          <span
+                            key={tag}
+                            className="inline-block px-3 py-1 text-xs bg-gradient-to-r from-purple-600/30 to-blue-600/30 text-purple-200 rounded-full border border-purple-500/30 backdrop-blur-sm"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                        <span className="text-sm text-gray-400 font-semibold">
+                          ⚙️ {template.steps.length} Steps
                         </span>
-                      ))}
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">
-                        {template.steps.length} steps
-                      </span>
-                      <button
-                        onClick={() => handleCreateFromTemplate(template)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                      >
-                        Use Template
-                      </button>
+                        <button
+                          onClick={() => handleCreateFromTemplate(template)}
+                          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-6 py-2 rounded-lg text-sm font-bold transition-all duration-300 shadow-lg shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/40 hover:-translate-y-1"
+                        >
+                          Use Template →
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-
-            {getDisplayTemplates().length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">
-                  No templates found matching your search.
-                </p>
+                ))}
               </div>
-            )}
-          </div>
-        )}
 
-        {view === 'workflows' && (
-          <div>
-            {/* My Workflows */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {getDisplayWorkflows().map((workflow) => (
-                <div
-                  key={workflow.id}
-                  className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6"
-                >
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {workflow.name}
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-4">
-                    {workflow.description}
+              {getDisplayTemplates().length === 0 && (
+                <div className="text-center py-20">
+                  <p className="text-gray-400 text-xl">
+                    ❌ No templates found matching your search.
                   </p>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-2">
-                      <span
-                        className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                          workflow.status === 'draft'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-green-100 text-green-800'
-                        }`}
-                      >
-                        {workflow.status}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        {workflow.steps.length} steps
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => {
-                        setSelectedWorkflow(workflow);
-                        setView('builder');
-                      }}
-                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm font-medium transition-colors"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteWorkflow(workflow.id)}
-                      className="px-3 py-2 border border-red-300 text-red-600 hover:bg-red-50 rounded text-sm font-medium transition-colors"
-                    >
-                      Delete
-                    </button>
-                  </div>
                 </div>
-              ))}
+              )}
             </div>
+          )}
 
-            {workflows.length === 0 && (
-              <div className="text-center py-12 bg-white rounded-lg">
-                <p className="text-gray-500 text-lg mb-4">
-                  No workflows created yet.
-                </p>
-                <button
-                  onClick={() => setView('templates')}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
-                >
-                  Create from Template
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+          {view === 'workflows' && (
+            <div>
+              {workflows.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-20">
+                  <div className="text-7xl mb-6">📋</div>
+                  <p className="text-gray-400 text-xl mb-8">
+                    No workflows created yet. Let's get started!
+                  </p>
+                  <button
+                    onClick={() => setView('templates')}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-8 py-4 rounded-xl font-bold transition-all duration-300 shadow-lg shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/40 hover:scale-105 text-lg"
+                  >
+                    ✨ Create from Template
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {getDisplayWorkflows().map((workflow) => (
+                    <div
+                      key={workflow.id}
+                      onMouseEnter={() => setHoveredCard(workflow.id)}
+                      onMouseLeave={() => setHoveredCard(null)}
+                      className="group backdrop-blur-md bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-purple-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/10 hover:scale-105 transform p-8 flex flex-col"
+                    >
+                      <h3 className="text-2xl font-bold text-white mb-2 group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-purple-400 group-hover:text-transparent group-hover:bg-clip-text transition-all">
+                        {workflow.name}
+                      </h3>
+                      <p className="text-gray-400 text-sm mb-6 flex-grow leading-relaxed">
+                        {workflow.description}
+                      </p>
+                      <div className="flex items-center justify-between mb-8 pb-6 border-b border-white/5">
+                        <div className="flex items-center space-x-3">
+                          <span
+                            className={`inline-block px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm border ${
+                              workflow.status === 'draft'
+                                ? 'bg-yellow-600/30 text-yellow-200 border-yellow-500/30'
+                                : 'bg-green-600/30 text-green-200 border-green-500/30'
+                            }`}
+                          >
+                            {workflow.status === 'draft' ? '📝' : '✓'} {workflow.status}
+                          </span>
+                        </div>
+                        <span className="text-xs text-gray-400 font-semibold">
+                          {workflow.steps.length} Steps
+                        </span>
+                      </div>
+                      <div className="flex space-x-3">
+                        <button
+                          onClick={() => {
+                            setSelectedWorkflow(workflow);
+                            setView('builder');
+                          }}
+                          className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-4 py-3 rounded-xl text-sm font-bold transition-all duration-300 shadow-lg shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/40"
+                        >
+                          ✏️ Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteWorkflow(workflow.id)}
+                          className="px-4 py-3 border-2 border-red-500/30 text-red-400 hover:bg-red-500/10 rounded-xl text-sm font-bold transition-all duration-300 hover:border-red-500/50"
+                        >
+                          🗑️ Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

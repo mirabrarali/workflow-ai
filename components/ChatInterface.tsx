@@ -91,16 +91,19 @@ export function ChatInterface({ onClose }: ChatInterfaceProps) {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-lg shadow-lg">
+    <div className="flex flex-col h-full backdrop-blur-md bg-white/5 border-l border-white/10 rounded-2xl overflow-hidden">
       {/* Header */}
-      <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-gray-900">
-          📱 AI Assistant
-        </h2>
+      <div className="p-6 border-b border-white/10 flex justify-between items-center backdrop-blur-md bg-gradient-to-r from-blue-600/20 to-purple-600/20">
+        <div className="flex items-center space-x-3">
+          <div className="text-3xl">🤖</div>
+          <h2 className="text-xl font-bold text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text">
+            AI Assistant
+          </h2>
+        </div>
         {onClose && (
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-gray-300 hover:text-white transition-all duration-300 text-xl leading-none"
           >
             ✕
           </button>
@@ -108,27 +111,27 @@ export function ChatInterface({ onClose }: ChatInterfaceProps) {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`flex ${
+            className={`flex animate-fade-in ${
               message.role === 'user' ? 'justify-end' : 'justify-start'
             }`}
           >
             <div
-              className={`max-w-xs lg:max-w-md xl:max-w-lg px-4 py-2 rounded-lg ${
+              className={`max-w-xs lg:max-w-md xl:max-w-lg px-5 py-3 rounded-2xl backdrop-blur-md border transition-all duration-300 ${
                 message.role === 'user'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 text-gray-900'
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-blue-400/30 shadow-lg shadow-blue-500/20'
+                  : 'bg-white/5 text-gray-200 border-white/10 hover:border-white/20'
               }`}
             >
-              <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+              <p className="text-sm whitespace-pre-wrap font-medium">{message.content}</p>
               <p
-                className={`text-xs mt-1 ${
+                className={`text-xs mt-2 font-semibold ${
                   message.role === 'user'
                     ? 'text-blue-100'
-                    : 'text-gray-500'
+                    : 'text-gray-400'
                 }`}
               >
                 {new Date(message.timestamp).toLocaleTimeString([], {
@@ -141,11 +144,11 @@ export function ChatInterface({ onClose }: ChatInterfaceProps) {
         ))}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-gray-200 text-gray-900 px-4 py-2 rounded-lg">
+            <div className="bg-white/5 text-gray-200 px-5 py-3 rounded-2xl border border-white/10 backdrop-blur-md">
               <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" />
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-100" />
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-200" />
+                <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" />
+                <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '0.15s' }} />
+                <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '0.3s' }} />
               </div>
             </div>
           </div>
@@ -154,8 +157,8 @@ export function ChatInterface({ onClose }: ChatInterfaceProps) {
       </div>
 
       {/* Input Area */}
-      <div className="p-4 border-t border-gray-200">
-        <div className="flex space-x-2">
+      <div className="p-6 border-t border-white/10 backdrop-blur-md bg-gradient-to-t from-slate-900 to-transparent">
+        <div className="flex space-x-3">
           <input
             type="text"
             value={input}
@@ -166,16 +169,16 @@ export function ChatInterface({ onClose }: ChatInterfaceProps) {
                 handleSendMessage();
               }
             }}
-            placeholder="Type your message..."
+            placeholder="Ask anything about workflows..."
             disabled={isLoading}
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+            className="flex-1 px-5 py-3 backdrop-blur-md bg-white/5 border border-white/10 text-white placeholder-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-white/2 disabled:cursor-not-allowed transition-all duration-300 hover:border-white/20"
           />
           <button
             onClick={handleSendMessage}
             disabled={isLoading || !input.trim()}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white px-6 py-3 rounded-xl font-bold disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-purple-500/20 hover:shadow-lg hover:shadow-purple-500/40 disabled:shadow-none"
           >
-            Send
+            ↲
           </button>
         </div>
       </div>

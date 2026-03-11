@@ -91,41 +91,41 @@ export function FileUploader({
     <div className="w-full">
       <div
         {...getRootProps()}
-        className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+        className={`relative backdrop-blur-md border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-300 cursor-pointer group ${
           isDragActive
-            ? 'border-blue-500 bg-blue-50'
-            : 'border-gray-300 bg-gray-50 hover:border-gray-400'
-        } ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+            ? 'border-purple-500 bg-purple-600/10 scale-105'
+            : 'border-white/20 bg-white/5 hover:border-purple-500/50 hover:bg-purple-600/10'
+        } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
         <input {...getInputProps()} />
 
-        <div className="space-y-2">
-          <svg
-            className="mx-auto h-12 w-12 text-gray-400"
-            stroke="currentColor"
-            fill="none"
-            viewBox="0 0 48 48"
-          >
-            <path
-              d="M28 8H12a4 4 0 00-4 4v20a4 4 0 004 4h24a4 4 0 004-4V20m-4-8l-6-6m0 0l-6 6m6-6v20"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+        <div className="space-y-4">
+          <div className="relative inline-block">
+            <div className="text-6xl group-hover:scale-110 transition-transform duration-300">
+              📄
+            </div>
+            <div className="absolute inset-0 animate-pulse-glow" />
+          </div>
 
           {isDragActive ? (
-            <div>
-              <p className="text-lg font-medium text-blue-600">Drop PDF here</p>
+            <div className="animate-fade-in">
+              <p className="text-2xl font-bold text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text">
+                📎 Drop PDF here
+              </p>
+              <p className="text-gray-300 mt-2">
+                Release to upload
+              </p>
             </div>
           ) : (
             <div>
-              <p className="text-lg font-medium text-gray-900">
-                Drop PDF file here
+              <p className="text-2xl font-bold text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text">
+                Upload PDF Document
               </p>
-              <p className="text-sm text-gray-500">or click to select</p>
-              <p className="text-xs text-gray-400 mt-2">
-                Supported format: PDF (max 10MB)
+              <p className="text-gray-400 mt-2">
+                Drag and drop or click to select
+              </p>
+              <p className="text-sm text-gray-500 mt-3 py-3 px-4 rounded-lg bg-white/5 border border-white/10 inline-block">
+                ✓ Supported: PDF | ✓ Max: 10MB | ✓ Instant Processing
               </p>
             </div>
           )}
@@ -133,22 +133,37 @@ export function FileUploader({
       </div>
 
       {uploadProgress > 0 && uploadProgress < 100 && (
-        <div className="mt-4">
-          <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="mt-6 space-y-3 animate-slide-in">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-gray-300">
+              Processing Document...
+            </p>
+            <span className="text-sm font-bold text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text">
+              {uploadProgress}%
+            </span>
+          </div>
+          <div className="w-full h-3 backdrop-blur-md bg-white/5 border border-white/10 rounded-full overflow-hidden">
             <div
-              className="bg-blue-600 h-2 rounded-full transition-all"
+              className="h-full transition-all duration-300 bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg shadow-purple-500/50"
               style={{ width: `${uploadProgress}%` }}
             />
           </div>
-          <p className="text-sm text-gray-600 mt-2">
-            Processing... {uploadProgress}%
+        </div>
+      )}
+
+      {uploadProgress === 100 && (
+        <div className="mt-6 p-4 backdrop-blur-md bg-green-600/10 border border-green-500/30 rounded-xl animate-slide-in">
+          <p className="text-green-400 font-semibold flex items-center justify-center">
+            ✓ Document processed successfully!
           </p>
         </div>
       )}
 
       {error && (
-        <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
+        <div className="mt-6 p-4 backdrop-blur-md bg-red-600/10 border border-red-500/30 rounded-xl animate-slide-in">
+          <p className="text-red-400 font-semibold flex items-center space-x-2">
+            <span>⚠ {error}</span>
+          </p>
         </div>
       )}
     </div>
